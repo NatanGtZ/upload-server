@@ -22,7 +22,7 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
       - name: Login do AWS ECR
         id: login-ecr
-        uses: aws-action/amazon-ecr-login@v2
+        uses: aws-actions/amazon-ecr-login@v2
       - name: Generate Tag
         id: generate_tag
         run: | 
@@ -36,5 +36,4 @@ jobs:
           IMAGE_TAG: ${{ steps.generate_tag.outputs.sha }}
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker tag: 
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
