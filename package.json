@@ -12,7 +12,9 @@
     "db:studio": "drizzle-kit studio",
     "db:migrate:test": "dotenv -e .env.test -- drizzle-kit migrate",
     "pretest": "npm run db:migrate:test",
-    "pretest:watch": "npm run db:migrate:test"
+    "pretest:watch": "npm run db:migrate:test",
+    "build": "tsup-node",
+    "start": "node dist/infra/http/server.js"
   },
   "keywords": [],
   "author": "",
@@ -36,6 +38,7 @@
     "@fastify/multipart": "^9.0.3",
     "@fastify/swagger": "^9.4.2",
     "@fastify/swagger-ui": "^5.2.2",
+    "tsup": "^8.4.0",
     "csv-stringify": "^6.5.2",
     "dayjs": "^1.11.13",
     "drizzle-orm": "^0.41.0",
