@@ -49,7 +49,7 @@ jobs:
       
       - name: Run Trivy scanner
         id: run-trivy-scanner
-        uses: aquasecurity/trivy@0.30.0
+        uses: aquasecurity/trivy-action@0.30.0
         with:
           image-ref: '${{steps.login-ecr.outputs.registry}}/${{ vars.ECR_REPOSITORY }}:test'
           format: 'table'
