@@ -1,14 +1,14 @@
-name: widget-server pipe Dockerhub
+# name: widget-server pipe Dockerhub
 
-on: 
-  push:
-    branches:
-      - 'main'
+# on: 
+#   push:
+#     branches:
+#       - 'main'
 
-jobs: 
-  Build:
-    name: Build
-    runs-on: ubuntu-latest
+# jobs: 
+#   Build:
+#     name: Build
+#     runs-on: ubuntu-latest
 #     steps: 
 #       - name: Checkout
 #         id: checkout
