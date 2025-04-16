@@ -38,13 +38,45 @@ jobs:
         run: |
           SHA=$(echo $GITHUB_SHA | head -c7)
           echo "sha=$SHA" >> $GITHUB_OUTPUT
-          
-      - name: Build, tag, and push docker image to Amazon ECR
-        id: build-push-image
-        env:
-          ECR_REGISTRY: ${{steps.login-ecr.outputs.registry}}
-          ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
-          IMAGE_TAG: ${{ steps.generate-tag.outputs.sha }}
-        run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Build and push the image to AWS ECR
+        id: build-and-push-the-image-to-aws-ecr
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: |
+            ${{steps.login-ecr.outputs.registry}}/${{ vars.ECR_REPOSITORY }}:test
+      
+      - name: Run Trivy scanner
+        id: run-trivy-scanner
+        uses: aquasecurity/trivy@0.30.0
+        with:
+          image-ref: '${{steps.login-ecr.outputs.registry}}/${{ vars.ECR_REPOSITORY }}:test'
+          format: 'table'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH,MEDIUM,LOW'
+
+      - name: Build and push the image to AWS ECR
+        id: build-and-push-the-image-to-aws-ecr
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          cache-from: type=gha
+          tags: |
+            ${{steps.login-ecr.outputs.registry}}/${{ vars.ECR_REPOSITORY }}:${{ steps.generate-tag.outputs.sha }}
+
+
+
+      # example without action    
+      # - name: Build, tag, and push docker image to Amazon ECR
+      #   id: build-push-image
+      #   env:
+      #     ECR_REGISTRY: ${{steps.login-ecr.outputs.registry}}
+      #     ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+      #     IMAGE_TAG: ${{ steps.generate-tag.outputs.sha }}
+      #   run: |
+      #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+      #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
