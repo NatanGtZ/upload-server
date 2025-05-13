@@ -73,7 +73,16 @@ jobs:
           tags: |
             ${{steps.login-ecr.outputs.registry}}/${{ vars.ECR_REPOSITORY }}:${{ steps.generate-tag.outputs.sha }}
 
-
+      - name: Deploy to App Runner
+        id: deploy-apprunner
+        uses: awslabs/amazon-app-runner-deploy@main
+        with: 
+          service: widget-server
+          image: ${{steps.login-ecr.outputs.registry}}/${{ vars.ECR_REPOSITORY }}:${{ steps.generate-tag.outputs.sha }}
+          region: ${{ vars.AWS_REGION }}
+          cpu: 1,
+          memory: 2
+          port: 3333
 
       # example without action    
       # - name: Build, tag, and push docker image to Amazon ECR
